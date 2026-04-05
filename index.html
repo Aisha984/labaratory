@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <title>Физика Комикс: ЭҚК Құпиясы</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Open+Sans:wght@400;700&display=swap');
+
+        :root {
+            --panel-bg: #ffffff;
+            --border-color: #000;
+            --hero-color: #ffde03;
+            --accent-color: #ff5722;
+            --sky-blue: #00d2ff;
+            --success-color: #4caf50;
+        }
+
+        body { background-color: #f0f0f0; font-family: 'Open Sans', sans-serif; margin: 0; padding: 20px; }
+        h1, h2, h3 { font-family: 'Bangers', cursive; letter-spacing: 2px; }
+
+        .comic-panel {
+            background: var(--panel-bg);
+            border: 4px solid var(--border-color);
+            box-shadow: 10px 10px 0px var(--border-color);
+            margin-bottom: 30px;
+            padding: 25px;
+            position: relative;
+        }
+
+        .comic-title {
+            background: var(--border-color);
+            color: white;
+            display: inline-block;
+            padding: 5px 20px;
+            transform: rotate(-1deg);
+            margin-bottom: 15px;
+        }
+
+        .theory-box {
+            background: #fff9c4;
+            border: 2px dashed #000;
+            padding: 15px;
+            margin: 10px 0;
+        }
+
+        .quiz-option {
+            display: block;
+            background: white;
+            border: 2px solid #000;
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .quiz-option:hover { background: var(--hero-color); }
+
+        .inventory-slot {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            border: 3px solid #ccc;
+            margin: 5px;
+            background: #eee;
+            vertical-align: top;
+            text-align: center;
+            font-size: 0.6rem;
+        }
+        .slot-active { border-color: var(--accent-color); background: var(--hero-color); }
+
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            border: 4px solid #000;
+        }
+        .iframe-container iframe {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+        }
+
+        #simContainer {
+            text-align: center;
+            background: #222;
+            padding: 20px;
+            border: 4px solid #000;
+            color: white;
+            margin-bottom: 20px;
+        }
+        canvas { background: #333; border: 2px solid var(--hero-color); max-width: 100%; }
+
+        .btn-action {
+            background: var(--accent-color);
+            color: white;
+            font-family: 'Bangers';
+            font-size: 1.2rem;
+            padding: 10px 25px;
+            border: 3px solid #000;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 #000;
+            margin-top: 10px;
+        }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 2px solid #000; padding: 10px; text-align: center; }
+        th { background: #eee; }
+
+        .scenario-box {
+            border-left: 10px solid var(--accent-color);
+            padding-left: 20px;
+            margin-bottom: 40px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 80px;
+            border: 2px solid #000;
+            padding: 10px;
+            font-family: inherit;
+            resize: none;
+            margin-bottom: 10px;
+        }
+
+        .feedback {
+            font-weight: bold;
+            color: var(--success-color);
+            display: none;
+            margin-bottom: 15px;
+        }
+
+        .example-card {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: #f9f9f9;
+            border: 2px solid #000;
+            padding: 15px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="comic-panel" style="text-align: center; background: var(--hero-color);">
+        <h1>⚡ №7 ЗЕРТХАНАЛЫҚ ЖҰМЫС: ЭҚК МЕН ІШКІ КЕДЕРГІНІ АНЫҚТАУ ⚡</h1>
+    </div>
+
+    <div class="comic-panel">
+        <div class="comic-title"><h2>1-БӨЛІМ: ТЕОРИЯЛЫҚ МӘЛІМЕТ</h2></div>
+        
+        <div class="theory-box">
+            <h3>📌 Негізгі ұғымдар:</h3>
+            <ul>
+                <li><b>Ток көзі</b> — бөлшектерді бөлу арқылы тізбекте электр өрісін тудыратын құрылғы (батарея, аккумулятор, генератор).</li>
+                <li><b>Электр қозғаушы күш (ЭҚК, $\mathcal{E}$)</b> — бөгде күштердің бірлік оң зарядты тізбек бойымен жылжыту кезіндегі атқаратын жұмысына тең физикалық шама. Өлшем бірлігі: <b>Вольт (В)</b>.</li>
+                <li><b>Ішкі кедергі ($r$)</b> — ток көзінің ішіндегі электролиттің немесе өткізгіштің ток ағынына көрсететін кедергісі.</li>
+            </ul>
+        </div>
+
+        <p>Толық тізбек үшін <b>Ом заңы</b> стандартты түрде былай жазылады:</p>
+        
+        <div class="theory-box">
+            $$I = \frac{\mathcal{E}}{R + r}$$
+            Мұндағы:
+            <ul>
+                <li>$I$ — тізбектегі ток күші (А);</li>
+                <li>$\mathcal{E}$ — ток көзінің ЭҚК-і (В);</li>
+                <li>$R$ — сыртқы тізбектің кедергісі (Ом);</li>
+                <li>$r$ — ток көзінің ішкі кедергісі (Ом).</li>
+            </ul>
+        </div>
+
+        <p>Ток көзінің қысқыштарындағы кернеу ($U$) мен ЭҚК арасындағы байланыс:</p>
+        <div class="theory-box">
+            $$U = \mathcal{E} - I \cdot r$$
+            Мұндағы $I \cdot r$ — ток көзінің ішіндегі кернеудің кемуі деп аталады.
+        </div>
+
+        <div class="example-card">
+            <h3>💡 ӨМІРЛІК МЫСАЛДАР</h3>
+            <p><b>1. Смартфонның қызуы:</b> Телефонмен ауыр ойын ойнағанда немесе зарядтағанда батареяның қызатыны — <b>ішкі кедергінің ($r$)</b> әсері. Ток ішкі кедергі арқылы өткенде Джоуль-Ленц заңы бойынша жылу бөлінеді.</p>
+            <p><b>2. Автокөлік стартері:</b> Суық күні көлікті оталдырған сәтте фара жарығы бәсеңдейді. Бұл стартердің өте үлкен ток ($I$) тұтынуынан ішкі кедергідегі кернеудің кемуі ($I \cdot r$) артып, сыртқы тізбекке (фараға) берілетін кернеудің азаюынан болады.</p>
+            <p><b>3. Батареяның "өлуі":</b> Ескі батареяның ЭҚК-і сақталғанымен, уақыт өте келе оның <b>ішкі кедергісі ($r$)</b> өте жоғарылап кетеді. Сондықтан оны тізбекке қосқанда, барлық кернеу ішінде "тұтынылып", сыртқа ток бере алмай қалады.</p>
+            <p><b>4. Қысқа тұйықталу қаупі:</b> Егер сыртқы кедергі нөлге ұмтылса ($R \approx 0$), ток күші максималды $I_{max} = \frac{\mathcal{E}}{r}$ мәніне жетеді. Бұл сымдардың балқуына және өртке әкеп соғуы мүмкін.</p>
+            <p><b>5. Тұрмыстық генераторлар:</b> Үйдегі жарық сөнгенде қолданылатын бензин генераторларына бірден көп құрылғыны (тоңазытқыш, үтік) қосқанда, оның кернеуі тұрақсызданады — бұл ЭҚК мен жүктеме арасындағы тепе-теңдіктің бұзылуы.</p>
+        </div>
+    </div>
+
+    <div class="comic-panel">
+        <div class="comic-title"><h2>🎮 ОЙЫН: ЭЛЕКТРОНДАР ЖАРЫСЫ</h2></div>
+        <div id="simContainer">
+            <canvas id="circuitCanvas" width="500" height="150"></canvas>
+            <div style="margin-top: 10px;">
+                <label>Сыртқы кедергі $R$: </label>
+                <input type="range" id="resistorSlider" min="5" max="100" value="50">
+                <span id="resValue">50</span> Ом
+            </div>
+            <p>Ток күші: <span id="currentSim">0.20</span> А</p>
+        </div>
+    </div>
+
+    <div class="comic-panel" id="questSection">
+        <div class="comic-title"><h2>2-БӨЛІМ: ҚҰРАЛДАРДЫ ЖИНАУ (КВЕСТ)</h2></div>
+        <div id="quizContainer">
+            <h3 id="questionTxt">Сұрақ 1: Тізбектегі ток күшін өлшейтін құрал қалай аталады?</h3>
+            <div id="options">
+                <div class="quiz-option" onclick="checkAnswer(0, 'Амперметр')">Амперметр</div>
+                <div class="quiz-option" onclick="checkAnswer(0, 'Вольтметр')">Вольтметр</div>
+                <div class="quiz-option" onclick="checkAnswer(0, 'Омметр')">Омметр</div>
+            </div>
+        </div>
+        <div style="margin-top:20px;">
+            <h4>Сенің инвентарың:</h4>
+            <div id="inv0" class="inventory-slot">? <br>Ток көзі</div>
+            <div id="inv1" class="inventory-slot">? <br>Амперметр</div>
+            <div id="inv2" class="inventory-slot">? <br>Вольтметр</div>
+            <div id="inv3" class="inventory-slot">? <br>Реостат</div>
+        </div>
+    </div>
+
+    <div id="scenarioSection" style="display:none;">
+        <div class="comic-panel">
+            <div class="comic-title"><h2>⚡ ЖАҒДАЯТ №1: «ҚАУІПТІ ТОК»</h2></div>
+            
+            <div class="scenario-box">
+                <p><b>🎬 1-көрініс (Бақылау)</b></p>
+                <p>👩‍🏫 Мұғалім: Оқушы реостатты бұрағанда амперметр тілшесі күрт оңға ауытқыды. Не байқап тұрсың?</p>
+                <textarea id="ans1_1" placeholder="Жауабыңызды жазыңыз..."></textarea>
+                <button class="btn-action" onclick="showFeedback('ans1_1')">Жауапты тексеру</button>
+                <p id="f_ans1_1" class="feedback">✅ Керемет! Ток күшінің артқанын дұрыс байқадыңыз.</p>
+            </div>
+
+            <div class="scenario-box">
+                <p><b>🎬 2-көрініс (Себебін табу)</b></p>
+                <p>👩‍🏫 Мұғалім: Реостаттың кедергісі нөлге жақындаса ($R \to 0$), ток неге күрт артады?</p>
+                <textarea id="ans1_2" placeholder="Ом заңын еске түсіріңіз..."></textarea>
+                <button class="btn-action" onclick="showFeedback('ans1_2')">Жауапты тексеру</button>
+                <p id="f_ans1_2" class="feedback">✅ Дұрыс! Кедергі мен ток күші кері пропорционал.</p>
+            </div>
+
+            <div class="scenario-box">
+                <p><b>🎬 3-көрініс (Қауіп)</b></p>
+                <p>👩‍🏫 Мұғалім: Осындай жағдайда батареяға не болуы мүмкін?</p>
+                <textarea id="ans1_3"></textarea>
+                <button class="btn-action" onclick="showFeedback('ans1_3')">Жауапты тексеру</button>
+                <p id="f_ans1_3" class="feedback">✅ Дұрыс! Батарея қызып, істен шығады.</p>
+            </div>
+
+            <div class="scenario-box">
+                <p><b>🎬 4-көрініс (Қорытынды)</b></p>
+                <p>👩‍🏫 Мұғалім: Бұл құбылыс қалай аталады?</p>
+                <textarea id="ans1_4"></textarea>
+                <button class="btn-action" onclick="showFeedback('ans1_4')">Жауапты тексеру</button>
+                <p id="f_ans1_4" class="feedback">✅ Бұл - Қысқа тұйықталу!</p>
+            </div>
+        </div>
+
+        <div class="comic-panel">
+            <div class="comic-title"><h2>⚡ ЖАҒДАЯТ №2: «ҚАТЕ ҚОСЫЛҒАН ҚҰРАЛДАР»</h2></div>
+            
+            <div class="scenario-box">
+                <p><b>🎬 1-көрініс (Жағдай)</b></p>
+                <p>👩‍🏫 Мұғалім: Оқушы вольтметрді тізбектей, ал амперметрді параллель қосты. Бұл дұрыс па?</p>
+                <textarea id="ans2_1"></textarea>
+                <button class="btn-action" onclick="showFeedback('ans2_1')">Жауапты тексеру</button>
+                <p id="f_ans2_1" class="feedback">✅ Дұрыс, бұл үлкен қателік.</p>
+            </div>
+
+            <div class="scenario-box">
+                <p><b>🎬 2-көрініс (Талдау)</b></p>
+                <p>👩‍🏫 Мұғалім: Амперметр неге тізбектей қосылуы керек?</p>
+                <textarea id="ans2_2"></textarea>
+                <button class="btn-action" onclick="showFeedback('ans2_2')">Жауапты тексеру</button>
+                <p id="f_ans2_2" class="feedback">✅ Себебі оның кедергісі өте аз, ол тізбектегі токқа кедергі жасамауы тиіс.</p>
+            </div>
+
+            <div class="scenario-box">
+                <p><b>🎬 3-көрініс (Қауіп)</b></p>
+                <p>👩‍🏫 Мұғалім: Егер амперметрді параллель қоссақ не болады?</p>
+                <textarea id="ans2_3"></textarea>
+                <button class="btn-action" onclick="showFeedback('ans2_3')">Жауапты тексеру</button>
+                <p id="f_ans2_3" class="feedback">✅ Амперметр күйіп кетеді (қысқа тұйықталу).</p>
+            </div>
+
+            <div class="scenario-box">
+                <p><b>🎬 4-көрініс (Тағы бір қате)</b></p>
+                <p>👩‍🏫 Мұғалім: Вольтметрді тізбектей қосқанда тізбекке қалай әсер етеді?</p>
+                <textarea id="ans2_4"></textarea>
+                <button class="btn-action" onclick="showFeedback('ans2_4')">Жауапты тексеру</button>
+                <p id="f_ans2_4" class="feedback">✅ Вольтметрдің кедергісі шексіз үлкен, сондықтан тізбекте ток тоқтайды.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="mainLab" style="display:none;">
+        <div class="comic-panel">
+            <div class="comic-title"><h2>3-БӨЛІМ: ЭКСПЕРИМЕНТ (PHET)</h2></div>
+            <div class="iframe-container">
+                <iframe src="https://phet.colorado.edu/sims/html/circuit-construction-kit-dc/latest/circuit-construction-kit-dc_all.html?locale=kk" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <div class="comic-panel">
+            <div class="comic-title"><h2>4-БӨЛІМ: ЕСЕПТЕУ</h2></div>
+            <table>
+                <tr><th>Тәжірибе №</th><th>I (А)</th><th>U (В)</th></tr>
+                <tr><td>1</td><td><input type="number" id="i1" step="0.01"></td><td><input type="number" id="u1" step="0.01"></td></tr>
+                <tr><td>2</td><td><input type="number" id="i2" step="0.01"></td><td><input type="number" id="u2" step="0.01"></td></tr>
+            </table>
+            <button class="btn-action" onclick="calculateResult()">НӘТИЖЕНІ ЕСЕПТЕУ</button>
+            <div id="resultOutput" style="margin-top:20px; font-weight: bold;"></div>
+        </div>
+
+        <div class="comic-panel">
+            <div class="comic-title"><h2>5-БӨЛІМ: ҚОРЫТЫНДЫ ТЕСТ</h2></div>
+            <div id="finalQuiz">
+                <div class="theory-box"><p>1. Ток көзінің ішкі кедергісі қайда орналасқан?</p>
+                    <label><input type="radio" name="q1" value="0"> Сыртында</label><br>
+                    <label><input type="radio" name="q1" value="1"> Ток көзінің ішінде</label>
+                </div>
+                <div class="theory-box"><p>2. Қысқа тұйықталу кезінде сыртқы кедергі $R$ неге тең?</p>
+                    <label><input type="radio" name="q2" value="1"> 0</label><br>
+                    <label><input type="radio" name="q2" value="0"> Шексіздік</label>
+                </div>
+                <div class="theory-box"><p>3. ЭҚК өлшем бірлігі қандай?</p>
+                    <label><input type="radio" name="q3" value="1"> Вольт</label><br>
+                    <label><input type="radio" name="q3" value="0"> Ампер</label>
+                </div>
+                <div class="theory-box"><p>4. Тұйық тізбек үшін Ом заңының формуласы?</p>
+                    <label><input type="radio" name="q4" value="1"> I = E/(R+r)</label><br>
+                    <label><input type="radio" name="q4" value="0"> I = U/R</label>
+                </div>
+                <div class="theory-box"><p>5. Вольтметр тізбекке қалай қосылады?</p>
+                    <label><input type="radio" name="q5" value="1"> Параллель</label><br>
+                    <label><input type="radio" name="q5" value="0"> Тізбектей</label>
+                </div>
+                <button class="btn-action" style="background: var(--success-color);" onclick="checkFinalQuiz()">ЖАУАПТАРДЫ ТЕКСЕРУ</button>
+            </div>
+        </div>
+
+        <div class="comic-panel">
+            <div class="comic-title"><h2>6-БӨЛІМ: РЕФЛЕКСИЯ</h2></div>
+            <textarea id="userReaction" placeholder="Бүгінгі жұмыс туралы ойыңыз..."></textarea>
+            <button class="btn-action" style="background:#2196F3" onclick="alert('Рақмет! Жұмысыңыз қабылданды.')">ЖҰМЫСТЫ ТАПСЫРУ</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { q: "Тізбектегі ток күшін өлшейтін құрал?", a: "Амперметр", options: ["Вольтметр", "Амперметр", "Реостат"] },
+            { q: "Кернеуді өлшейтін құрал?", a: "Вольтметр", options: ["Омметр", "Вольтметр", "Батарея"] },
+            { q: "Кедергіні реттейтін құрал?", a: "Реостат", options: ["Реостат", "Кілт", "Диод"] },
+            { q: "Ток көзінің энергиясын сипаттайтын шама?", a: "ЭҚК", options: ["Ток күші", "Кедергі", "ЭҚК"] }
+        ];
+
+        let currentStep = 0;
+
+        function checkAnswer(qIdx, selected) {
+            if(selected === questions[currentStep].a) {
+                document.getElementById('inv' + currentStep).classList.add('slot-active');
+                document.getElementById('inv' + currentStep).innerHTML = "✅<br>" + selected;
+                currentStep++;
+                if(currentStep < questions.length) { updateQuiz(); } 
+                else {
+                    document.getElementById('quizContainer').innerHTML = "<h3>🎉 ҚҰРАЛДАР ДАЙЫН! КВЕСТ ПЕН ЛАБОРАТОРИЯ АШЫЛДЫ.</h3>";
+                    document.getElementById('scenarioSection').style.display = 'block';
+                    document.getElementById('mainLab').style.display = 'block';
+                }
+            } else { alert("Қате!"); }
+        }
+
+        function updateQuiz() {
+            document.getElementById('questionTxt').innerText = "Сұрақ " + (currentStep + 1) + ": " + questions[currentStep].q;
+            let optionsHtml = "";
+            questions[currentStep].options.forEach(opt => {
+                optionsHtml += <div class="quiz-option" onclick="checkAnswer(${currentStep}, '${opt}')">${opt}</div>;
+            });
+            document.getElementById('options').innerHTML = optionsHtml;
+        }
+
+        function showFeedback(id) {
+            if(document.getElementById(id).value.length > 3) {
+                document.getElementById('f_' + id).style.display = 'block';
+            } else { alert("Жауапты толығырақ жазыңыз!"); }
+        }
+
+        function calculateResult() {
+            const i1 = parseFloat(document.getElementById('i1').value);
+            const u1 = parseFloat(document.getElementById('u1').value);
+            const i2 = parseFloat(document.getElementById('i2').value);
+            const u2 = parseFloat(document.getElementById('u2').value);
+            if(i1 && u1 && i2 && u2) {
+                let r = Math.abs((u1 - u2) / (i2 - i1));
+                let resE = u1 + i1 * r;
+                document.getElementById('resultOutput').innerHTML = Нәтиже: r = ${r.toFixed(2)} Ом, ЭҚК = ${resE.toFixed(2)} В;
+            } else { alert("Кестені толтырыңыз!"); }
+        }
+
+        function checkFinalQuiz() {
+            let score = 0;
+            for(let i=1; i<=5; i++) {
+                const radio = document.querySelector(input[name="q${i}"]:checked);
+                if(radio && radio.value === "1") score++;
+            }
+            alert("Нәтиже: " + score + "/5");
+        }
+
+        // --- SIMULATION ---
+        const canvas = document.getElementById('circuitCanvas');
+        const ctx = canvas.getContext('2d');
+        const slider = document.getElementById('resistorSlider');
+        let offset = 0;
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const R = parseInt(slider.value);
+            document.getElementById('resValue').innerText = R;
+            const I = 12 / (R + 2); // E=12, r=2
+            document.getElementById('currentSim').innerText = I.toFixed(2);
+            
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = 3;
+            ctx.strokeRect(50, 40, 400, 70);
+
+            ctx.fillStyle = "yellow";
+            offset += I * 10;
+            if(offset > 30) offset = 0;
+
+            for(let i=0; i<15; i++) {
+                let x = (50 + i*30 + offset) % 400 + 50;
+                ctx.beginPath(); ctx.arc(x, 40, 4, 0, Math.PI*2); ctx.fill();
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
